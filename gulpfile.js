@@ -33,6 +33,14 @@ var paths = {
 gulp.task('clean', function() {
     return del('dist/*');
 });
+//打包合并js
+gulp.task('scripts',function(){
+    gulp.src(['./src/js/*.js'])
+    .pipe(concat('all.js'))
+    .pipe(srtipDebug())
+    .pipe(uglify())
+    .pipe(gulp.dest('./build/js'));
+})
 
 //minifies js
 gulp.task('minifyJS', function() {

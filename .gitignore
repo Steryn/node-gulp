@@ -2,6 +2,7 @@
 node_modules/
 npm-debug.log
 .editorconfig
+.git/
 dist/
 exercise/
 *.zip
