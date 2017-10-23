@@ -1,9 +1,10 @@
 var gulp = require('gulp'); //requires the core Gulp library
 var g = require('gulp-load-plugins')(); //read the dependencies in the package.json file and inject each of them for us.
-var browserSync = require('browser-sync');
 var runSequence = require('run-sequence');
 var sass = require('gulp-ruby-sass');
 var del = require('del');
+var browserSync = require('browser-sync').create();
+var reload = browserSync.reload;
 
 //jshint block
 //Stylish reporter for JSHint(reporter looked more beauty)
@@ -36,26 +37,26 @@ gulp.task('clean', function () {
     return del('dist/*');
 });
 //打包合并js
-gulp.task('scripts', function () {
-    gulp.src(['./src/js/*.js'])
-        .pipe(concat('all.js'))
-        .pipe(srtipDebug())
-        .pipe(uglify())
-        .pipe(gulp.dest('./build/js'));
-})
-
-//minifies js
-gulp.task('minifyJS', function () {
-    return gulp.src(paths.app.js)
-        .pipe(g.uglify())
-        .pipe(gulp.dest(paths.dist.js));
-});
+// gulp.task('scripts', function () {
+//     gulp.src(['./src/js/*.js'])
+//         .pipe(concat('all.js'))
+//         .pipe(srtipDebug())
+//         .pipe(uglify())
+//         .pipe(gulp.dest('./build/js'));
+// })
 
 // Inspect js
 gulp.task('jshint', function () {
     gulp.src(paths.app.js)
         .pipe(g.jshint(packageJSON.jshintConfig))
         .pipe(g.jshint.reporter(stylish))
+});
+
+//minifies js
+gulp.task('minifyJS', function () {
+    return gulp.src(paths.app.js)
+        .pipe(g.uglify())
+        .pipe(gulp.dest(paths.dist.js));
 });
 
 //compress less & minify css
@@ -68,10 +69,16 @@ gulp.task('less', function () {
 
 // style有以下4种选择：nested：嵌套缩进，它是默认值expanded：每个属性占一行,compact：每条样式占一行,compressed：整个压缩成一行
 gulp.task('sass', function () {
-    sass(paths.app.sass, { style: 'compact' })
+    sass(paths.app.sass, {
+            style: 'compact'
+        })
         .on('error', sass.logError)
         .pipe(gulp.dest(paths.dist.css))
+        .pipe(reload({
+            stream: true
+        }))
 });
+
 
 //minify HTML
 gulp.task('minifyHTML', function () {
@@ -82,30 +89,36 @@ gulp.task('minifyHTML', function () {
         .pipe(gulp.dest(paths.dist.html));
 });
 
+// Only build
+gulp.task('build', function () {
+    runSequence('clean', ['jshint', 'minifyJS', 'sass', 'minifyHTML']);
+});
+
 // Watching static resources
 gulp.task('watch', function () {
     gulp.watch(paths.app.html, ['minifyHTML']);
-    gulp.watch(paths.app.less, ['less']);
     gulp.watch(paths.app.js, ['jshint', 'minifyJS']);
+    gulp.watch(paths.app.less, ['less']);
     gulp.watch(paths.app.sass, ['sass']);
 });
 
 // Synchronously update browser
 gulp.task('browser', function () {
-    browserSync({
+    browserSync.init({
         //proxy: 'localhost:3000',
         //port: 3001,
         server: './',
-        startPath: 'dist/html/index.html'
+        startPath: 'dist/html/index.html',
     });
 
     gulp.watch([paths.app.all], browserSync.reload);
 });
-
-// Only build
-gulp.task('build', function () {
-    runSequence('clean', ['jshint', 'minifyJS', 'sass', 'minifyHTML']);
-});
+//设置代理
+// gulp.task('browser-sync', function() {
+//     browserSync.init({
+//         proxy: "你的域名或IP"
+//     });
+// });
 
 // Build & Watch
 gulp.task('build-watch', ['build', 'watch'], function () {
