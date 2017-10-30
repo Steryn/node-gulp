@@ -1,0 +1,18 @@
+{
+  "name": "ls-bower",
+  "description": "first-bower",
+  "main": "index.js",
+  "authors": [
+    "liu"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/Steryn/node-gulp",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

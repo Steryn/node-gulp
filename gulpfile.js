@@ -27,7 +27,7 @@ var paths = {
         less: 'app/style/**/*.less',
         js: 'app/js/**/*.js',
         img: 'app/img/**/*',
-        html: 'app/views/**/*.html',
+        html: 'app/**/*.html',
         sass: 'app/style/**/*.scss',
     }
 };
