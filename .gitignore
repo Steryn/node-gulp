@@ -1,5 +1,6 @@
 .DS_Store
 node_modules/
+libs/
 npm-debug.log
 .editorconfig
 .sass-cache

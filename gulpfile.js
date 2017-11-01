@@ -16,18 +16,20 @@ var packageJSON = require('./package');
 var paths = {
     dist: {
         all: 'dist/**/*',
+        html: 'dist/html',
+        img: 'dist/img',
         js: 'dist/js',
         css: 'dist/css',
-        img: 'dist/img',
-        html: 'dist/html',
         lib: 'dist/lib'
     },
     app: {
         all: 'app/**/*',
-        less: 'app/style/**/*.less',
-        js: 'app/js/**/*.js',
-        img: 'app/img/**/*',
         html: 'app/**/*.html',
+        img: 'app/img/**/*',
+        js: 'app/js/*.js',
+        jslib: 'app/js/lib/**/*.js',
+        css: 'app/style/lib/**/*.css',
+        less: 'app/style/**/*.less',
         sass: 'app/style/**/*.scss',
     }
 };
@@ -57,6 +59,18 @@ gulp.task('minifyJS', function () {
     return gulp.src(paths.app.js)
         .pipe(g.uglify())
         .pipe(gulp.dest(paths.dist.js));
+});
+//打包lib下js
+gulp.task('jslib', function () {
+    return gulp.src(paths.app.jslib)
+        .pipe(g.uglify())
+        .pipe(gulp.dest(paths.dist.js));
+});
+
+//打包lib下css
+gulp.task('css', function () {
+    return gulp.src(paths.app.css)
+        .pipe(gulp.dest(paths.dist.css));
 });
 
 //compress less & minify css
@@ -91,13 +105,14 @@ gulp.task('minifyHTML', function () {
 
 // Only build
 gulp.task('build', function () {
-    runSequence('clean', ['jshint', 'minifyJS', 'sass', 'minifyHTML']);
+    runSequence('clean', ['jshint', 'minifyJS', 'jslib', 'sass', 'less', 'css', 'minifyHTML']);
 });
 
 // Watching static resources
 gulp.task('watch', function () {
     gulp.watch(paths.app.html, ['minifyHTML']);
-    gulp.watch(paths.app.js, ['jshint', 'minifyJS']);
+    gulp.watch(paths.app.js, ['jshint', 'minifyJS', 'jslib']);
+    gulp.watch(paths.app.less, ['css']);
     gulp.watch(paths.app.less, ['less']);
     gulp.watch(paths.app.sass, ['sass']);
 });
