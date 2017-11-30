@@ -28,7 +28,7 @@ var paths = {
         img: 'app/img/**/*',
         js: 'app/js/*.js',
         jslib: 'app/js/lib/**/*.js',
-        css: 'app/style/lib/**/*.css',
+        css: 'app/style/lib/**/*.scss',
         less: 'app/style/**/*.less',
         sass: 'app/style/**/*.scss',
     }
